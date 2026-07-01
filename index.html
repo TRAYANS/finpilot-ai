@@ -23,6 +23,11 @@
       --metal: #c9a227;
       --real: #10b981;
       --other: #8b5cf6;
+      --santander: #e11d48;
+      --bbva: #1d4ed8;
+      --revolut: #111827;
+      --ing: #f97316;
+      --cash-wallet: #059669;
       --radius: 8px;
     }
 
@@ -189,6 +194,134 @@
       display: grid;
       grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
       gap: 18px;
+    }
+
+    .bank-focus {
+      margin-bottom: 18px;
+      padding: 20px;
+    }
+
+    .bank-hero {
+      display: grid;
+      grid-template-columns: minmax(250px, 0.9fr) minmax(320px, 1.1fr) minmax(250px, 0.9fr);
+      gap: 22px;
+      align-items: center;
+    }
+
+    .bank-summary {
+      display: grid;
+      gap: 10px;
+      align-content: center;
+    }
+
+    .bank-total {
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 800;
+      line-height: 0.95;
+      font-variant-numeric: tabular-nums;
+      color: var(--navy);
+    }
+
+    .bank-note {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      max-width: 380px;
+    }
+
+    .bank-donut-wrap {
+      display: grid;
+      place-items: center;
+      min-height: 330px;
+    }
+
+    .bank-donut {
+      width: min(310px, 72vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--santander) 0 49%,
+        var(--bbva) 49% 74%,
+        var(--revolut) 74% 91%,
+        var(--ing) 91% 96%,
+        var(--cash-wallet) 96% 100%
+      );
+      position: relative;
+      box-shadow: 0 22px 45px rgba(15, 39, 71, 0.12);
+    }
+
+    .bank-donut::after {
+      content: "8.730 EUR";
+      position: absolute;
+      inset: 68px;
+      border-radius: 50%;
+      background: white;
+      display: grid;
+      place-items: center;
+      color: var(--navy);
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+
+    .bank-cells {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .bank-cell {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfe;
+      padding: 14px;
+      min-height: 126px;
+      display: grid;
+      gap: 12px;
+      align-content: space-between;
+    }
+
+    .bank-cell-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .bank-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+      flex: 0 0 auto;
+    }
+
+    .bank-cell h3 {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .bank-cell-value {
+      font-size: 22px;
+      font-weight: 780;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+    }
+
+    .bank-cell-meta {
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
     }
 
     .panel {
@@ -448,7 +581,9 @@
 
       .coach,
       .grid,
-      .asset-grid {
+      .asset-grid,
+      .bank-hero,
+      .bank-cells {
         grid-template-columns: 1fr;
       }
 
@@ -460,6 +595,14 @@
       .donut-row {
         grid-template-columns: 1fr;
         justify-items: center;
+      }
+
+      .bank-donut-wrap {
+        min-height: 250px;
+      }
+
+      .bank-cell {
+        min-height: 112px;
       }
     }
   </style>
@@ -495,6 +638,105 @@
           <span>Salud financiera</span>
         </div>
       </div>
+
+      <section class="panel bank-focus">
+        <div class="section-title">
+          <h2>Capital en bancos</h2>
+          <span class="muted">Distribucion de liquidez</span>
+        </div>
+        <div class="bank-hero">
+          <div class="bank-summary">
+            <span class="eyebrow">Liquidez disponible</span>
+            <span class="bank-total">8.730 EUR</span>
+            <span class="positive">+420 EUR este mes</span>
+            <p class="bank-note">El 49 % de tu liquidez esta concentrada en Santander. Mantienes efectivo suficiente para operar y un exceso estimado de 1.200 EUR frente al objetivo de liquidez inmediata.</p>
+          </div>
+
+          <div class="bank-donut-wrap" aria-label="Distribucion del capital por bancos">
+            <div class="bank-donut"></div>
+          </div>
+
+          <div class="legend">
+            <div class="legend-item"><span class="dot" style="background:var(--santander)"></span><span>Banco Santander</span><span class="amount">4.250</span></div>
+            <div class="legend-item"><span class="dot" style="background:var(--bbva)"></span><span>BBVA</span><span class="amount">2.180</span></div>
+            <div class="legend-item"><span class="dot" style="background:var(--revolut)"></span><span>Revolut</span><span class="amount">1.430</span></div>
+            <div class="legend-item"><span class="dot" style="background:var(--ing)"></span><span>ING</span><span class="amount">550</span></div>
+            <div class="legend-item"><span class="dot" style="background:var(--cash-wallet)"></span><span>Efectivo</span><span class="amount">320</span></div>
+          </div>
+        </div>
+
+        <div class="bank-cells">
+          <article class="bank-cell">
+            <div class="bank-cell-top">
+              <div>
+                <h3>Banco Santander</h3>
+                <span class="muted">Cuenta principal</span>
+              </div>
+              <span class="bank-logo" style="background:var(--santander)">SAN</span>
+            </div>
+            <div>
+              <div class="bank-cell-value">4.250 EUR</div>
+              <div class="bank-cell-meta"><span>49 %</span><span>+180 EUR</span></div>
+            </div>
+          </article>
+
+          <article class="bank-cell">
+            <div class="bank-cell-top">
+              <div>
+                <h3>BBVA</h3>
+                <span class="muted">Ahorro</span>
+              </div>
+              <span class="bank-logo" style="background:var(--bbva)">BBVA</span>
+            </div>
+            <div>
+              <div class="bank-cell-value">2.180 EUR</div>
+              <div class="bank-cell-meta"><span>25 %</span><span>+90 EUR</span></div>
+            </div>
+          </article>
+
+          <article class="bank-cell">
+            <div class="bank-cell-top">
+              <div>
+                <h3>Revolut</h3>
+                <span class="muted">Operativa</span>
+              </div>
+              <span class="bank-logo" style="background:var(--revolut)">REV</span>
+            </div>
+            <div>
+              <div class="bank-cell-value">1.430 EUR</div>
+              <div class="bank-cell-meta"><span>16 %</span><span>+120 EUR</span></div>
+            </div>
+          </article>
+
+          <article class="bank-cell">
+            <div class="bank-cell-top">
+              <div>
+                <h3>ING</h3>
+                <span class="muted">Reserva</span>
+              </div>
+              <span class="bank-logo" style="background:var(--ing)">ING</span>
+            </div>
+            <div>
+              <div class="bank-cell-value">550 EUR</div>
+              <div class="bank-cell-meta"><span>6 %</span><span>+30 EUR</span></div>
+            </div>
+          </article>
+
+          <article class="bank-cell">
+            <div class="bank-cell-top">
+              <div>
+                <h3>Efectivo</h3>
+                <span class="muted">Caja</span>
+              </div>
+              <span class="bank-logo" style="background:var(--cash-wallet)">EUR</span>
+            </div>
+            <div>
+              <div class="bank-cell-value">320 EUR</div>
+              <div class="bank-cell-meta"><span>4 %</span><span>0 EUR</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
 
       <section class="coach">
         <div>
