@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FinPilot AI - Dashboard Prototype</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --surface-2: #eef1f5;
+      --line: #d9dee7;
+      --text: #111827;
+      --muted: #667085;
+      --blue: #2563eb;
+      --navy: #0f2747;
+      --green: #16a34a;
+      --amber: #d97706;
+      --red: #dc2626;
+      --cash: #38bdf8;
+      --stocks: #2563eb;
+      --crypto: #f59e0b;
+      --metal: #c9a227;
+      --real: #10b981;
+      --other: #8b5cf6;
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+    }
+
+    aside {
+      background: #07111f;
+      color: white;
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 750;
+      font-size: 18px;
+      margin-bottom: 28px;
+    }
+
+    .mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #2563eb, #10b981);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    nav {
+      display: grid;
+      gap: 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #c7d2e3;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.11);
+      color: white;
+    }
+
+    main {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.15;
+    }
+
+    .date {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .health {
+      border: 1px solid #bbf7d0;
+      background: #ecfdf3;
+      color: #14532d;
+      border-radius: 8px;
+      padding: 10px 12px;
+      min-width: 148px;
+      text-align: right;
+    }
+
+    .health strong {
+      font-size: 24px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .health span {
+      display: block;
+      font-size: 12px;
+      color: #166534;
+    }
+
+    .coach {
+      background: #0f2747;
+      color: white;
+      border-radius: var(--radius);
+      padding: 18px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 16px 40px rgba(15, 39, 71, 0.18);
+    }
+
+    .coach-label {
+      color: #bfdbfe;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .coach p {
+      margin: 0;
+      max-width: 980px;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-content: start;
+      justify-content: flex-end;
+      max-width: 430px;
+    }
+
+    button {
+      border: 0;
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+      border-radius: 8px;
+      padding: 9px 11px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .hero-metric {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .net-worth {
+      font-size: clamp(34px, 5vw, 56px);
+      font-weight: 780;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .positive {
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .chart {
+      height: 240px;
+      position: relative;
+      border-top: 1px solid var(--surface-2);
+      margin-top: 16px;
+      padding-top: 12px;
+    }
+
+    .chart svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tab {
+      color: var(--muted);
+      background: var(--surface-2);
+      border-radius: 8px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .tab.active {
+      color: white;
+      background: var(--blue);
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .donut-row {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+    }
+
+    .donut {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--stocks) 0 39%,
+        var(--crypto) 39% 55%,
+        var(--cash) 55% 73%,
+        var(--metal) 73% 80%,
+        var(--real) 80% 92%,
+        var(--other) 92% 100%
+      );
+      position: relative;
+    }
+
+    .donut::after {
+      content: "128.5k";
+      position: absolute;
+      inset: 34px;
+      border-radius: 50%;
+      background: white;
+      display: grid;
+      place-items: center;
+      font-weight: 780;
+      color: var(--navy);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .legend {
+      display: grid;
+      gap: 10px;
+    }
+
+    .legend-item {
+      display: grid;
+      grid-template-columns: 12px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .amount {
+      font-weight: 720;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .asset-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      min-height: 168px;
+    }
+
+    .asset-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .asset-head h3 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .pill {
+      background: var(--surface-2);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 4px 7px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .rows {
+      display: grid;
+      gap: 9px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      font-size: 13px;
+    }
+
+    .recommendations {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rec {
+      border-left: 4px solid var(--blue);
+      background: #f8fafc;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .rec.warn {
+      border-left-color: var(--amber);
+    }
+
+    .score-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .score-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .score-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .bar {
+      height: 7px;
+      border-radius: 99px;
+      background: var(--surface-2);
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      background: var(--green);
+      border-radius: inherit;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        display: none;
+      }
+
+      main {
+        padding: 16px;
+      }
+
+      .coach,
+      .grid,
+      .asset-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions {
+        justify-content: flex-start;
+        max-width: none;
+      }
+
+      .donut-row {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="mark">FP</div>
+        <span>FinPilot AI</span>
+      </div>
+      <nav>
+        <a class="nav-item active" href="#">Dashboard</a>
+        <a class="nav-item" href="#">Patrimonio</a>
+        <a class="nav-item" href="#">Movimientos</a>
+        <a class="nav-item" href="#">Inversiones</a>
+        <a class="nav-item" href="#">Coach IA</a>
+        <a class="nav-item" href="#">Objetivos</a>
+        <a class="nav-item" href="#">Analitica</a>
+        <a class="nav-item" href="#">Documentos</a>
+        <a class="nav-item" href="#">Ajustes</a>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div>
+          <h1>Dashboard patrimonial</h1>
+          <div class="date">Jueves, 2 de julio de 2026</div>
+        </div>
+        <div class="health">
+          <strong>88/100</strong>
+          <span>Salud financiera</span>
+        </div>
+      </div>
+
+      <section class="coach">
+        <div>
+          <div class="coach-label">Coach Financiero</div>
+          <p>Este mes tu patrimonio ha aumentado un 1,7 %. Mantienes un 18 % del patrimonio en liquidez, por encima del objetivo del 10 %. Podrias invertir aproximadamente 6.000 EUR sin comprometer tu fondo de emergencia.</p>
+        </div>
+        <div class="quick-actions">
+          <button>Donde invierto este mes?</button>
+          <button>Como va mi patrimonio?</button>
+          <button>Voy camino de mis objetivos?</button>
+          <button>Riesgos detectados</button>
+        </div>
+      </section>
+
+      <div class="grid">
+        <section class="panel">
+          <div class="hero-metric">
+            <span class="eyebrow">Patrimonio Neto</span>
+            <span class="net-worth">128.540 EUR</span>
+            <span class="positive">▲ +2.140 EUR este mes (+1,69 %)</span>
+          </div>
+          <div class="tabs">
+            <span class="tab">1M</span>
+            <span class="tab active">3M</span>
+            <span class="tab">6M</span>
+            <span class="tab">1A</span>
+            <span class="tab">Todo</span>
+          </div>
+          <div class="chart" aria-label="Evolucion del patrimonio">
+            <svg viewBox="0 0 760 240" role="img">
+              <defs>
+                <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#2563eb" stop-opacity="0.24"/>
+                  <stop offset="100%" stop-color="#2563eb" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0,205 C70,192 96,176 145,178 C205,181 220,132 286,140 C350,149 360,112 428,114 C493,116 514,82 578,78 C647,74 690,52 760,42 L760,240 L0,240 Z" fill="url(#area)"/>
+              <path d="M0,205 C70,192 96,176 145,178 C205,181 220,132 286,140 C350,149 360,112 428,114 C493,116 514,82 578,78 C647,74 690,52 760,42" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>
+              <g stroke="#d9dee7" stroke-width="1">
+                <line x1="0" y1="60" x2="760" y2="60"/>
+                <line x1="0" y1="120" x2="760" y2="120"/>
+                <line x1="0" y1="180" x2="760" y2="180"/>
+              </g>
+            </svg>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2>Distribucion</h2>
+            <span class="muted">Por clase de activo</span>
+          </div>
+          <div class="donut-row">
+            <div class="donut"></div>
+            <div class="legend">
+              <div class="legend-item"><span class="dot" style="background:var(--stocks)"></span><span>Bolsa</span><span class="amount">50.000</span></div>
+              <div class="legend-item"><span class="dot" style="background:var(--crypto)"></span><span>Cripto</span><span class="amount">20.300</span></div>
+              <div class="legend-item"><span class="dot" style="background:var(--cash)"></span><span>Liquidez</span><span class="amount">23.180</span></div>
+              <div class="legend-item"><span class="dot" style="background:var(--metal)"></span><span>Metales</span><span class="amount">8.500</span></div>
+              <div class="legend-item"><span class="dot" style="background:var(--real)"></span><span>Vivienda</span><span class="amount">15.400</span></div>
+              <div class="legend-item"><span class="dot" style="background:var(--other)"></span><span>Otros</span><span class="amount">11.160</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="asset-grid">
+        <article class="asset-card">
+          <div class="asset-head">
+            <h3>Liquidez</h3>
+            <span class="pill">18 %</span>
+          </div>
+          <div class="rows">
+            <div class="row"><span>Banco Santander</span><strong>4.250 EUR</strong></div>
+            <div class="row"><span>BBVA</span><strong>2.180 EUR</strong></div>
+            <div class="row"><span>Revolut</span><strong>1.430 EUR</strong></div>
+            <div class="row"><span>Efectivo</span><strong>320 EUR</strong></div>
+          </div>
+        </article>
+
+        <article class="asset-card">
+          <div class="asset-head">
+            <h3>Bolsa</h3>
+            <span class="pill">+2,4 % mes</span>
+          </div>
+          <div class="rows">
+            <div class="row"><span>ETF</span><strong>38.000 EUR</strong></div>
+            <div class="row"><span>Acciones</span><strong>12.000 EUR</strong></div>
+          </div>
+        </article>
+
+        <article class="asset-card">
+          <div class="asset-head">
+            <h3>Criptomonedas</h3>
+            <span class="pill">Riesgo alto</span>
+          </div>
+          <div class="rows">
+            <div class="row"><span>Bitcoin</span><strong>18.000 EUR</strong></div>
+            <div class="row"><span>Ethereum</span><strong>2.300 EUR</strong></div>
+          </div>
+        </article>
+
+        <article class="asset-card">
+          <div class="asset-head">
+            <h3>Acciones sugeridas</h3>
+            <span class="pill">3 hoy</span>
+          </div>
+          <div class="recommendations">
+            <div class="rec">Mantener aportacion periodica actual.</div>
+            <div class="rec warn">Reducir exceso de liquidez durante los proximos 30 dias.</div>
+            <div class="rec">Revisar objetivo "barco" antes de nuevos gastos grandes.</div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel" style="margin-top:18px">
+        <div class="section-title">
+          <h2>Desglose de salud financiera</h2>
+          <span class="muted">Reglas transparentes</span>
+        </div>
+        <div class="score-list">
+          <div class="score-row"><div class="score-top"><span>Liquidez</span><span>95/100</span></div><div class="bar"><span style="width:95%"></span></div></div>
+          <div class="score-row"><div class="score-top"><span>Diversificacion</span><span>80/100</span></div><div class="bar"><span style="width:80%"></span></div></div>
+          <div class="score-row"><div class="score-top"><span>Rentabilidad</span><span>91/100</span></div><div class="bar"><span style="width:91%"></span></div></div>
+          <div class="score-row"><div class="score-top"><span>Riesgo</span><span>75/100</span></div><div class="bar"><span style="width:75%;background:var(--amber)"></span></div></div>
+          <div class="score-row"><div class="score-top"><span>Endeudamiento</span><span>100/100</span></div><div class="bar"><span style="width:100%"></span></div></div>
+          <div class="score-row"><div class="score-top"><span>Ahorro mensual</span><span>89/100</span></div><div class="bar"><span style="width:89%"></span></div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
