@@ -1,0 +1,973 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FinPilot AI - Dashboard Prototype</title>
+  <style>
+    :root {
+      --bg: #05070a;
+      --panel: rgba(16, 19, 25, 0.88);
+      --panel-strong: rgba(21, 25, 33, 0.94);
+      --stroke: rgba(255, 255, 255, 0.11);
+      --stroke-soft: rgba(255, 255, 255, 0.07);
+      --text: #f6f7fb;
+      --muted: #a2a7b2;
+      --faint: #666d7a;
+      --red: #ff2638;
+      --red-dark: #8e1420;
+      --green: #37c759;
+      --orange: #f7a928;
+      --card-radius: 18px;
+      --small-radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 30% 0%, rgba(255, 255, 255, 0.055), transparent 24rem),
+        radial-gradient(circle at 80% 28%, rgba(255, 38, 56, 0.12), transparent 22rem),
+        linear-gradient(180deg, #080b10 0%, #040609 100%);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    .screen {
+      width: min(100%, 430px);
+      margin: 0 auto;
+      min-height: 100vh;
+      padding-bottom: 92px;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+      background-size: 52px 52px;
+      box-shadow: 0 0 80px rgba(0, 0, 0, 0.55);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: 60px -60px auto -60px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 65%);
+      pointer-events: none;
+    }
+
+    .status {
+      height: 44px;
+      padding: 16px 28px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 760;
+      position: relative;
+      z-index: 2;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .signal {
+      display: flex;
+      align-items: end;
+      gap: 2px;
+      height: 15px;
+    }
+
+    .signal span {
+      width: 3px;
+      border-radius: 4px;
+      background: var(--text);
+      display: block;
+    }
+
+    .signal span:nth-child(1) { height: 6px; }
+    .signal span:nth-child(2) { height: 9px; }
+    .signal span:nth-child(3) { height: 12px; }
+    .signal span:nth-child(4) { height: 15px; }
+
+    .wifi {
+      width: 18px;
+      height: 13px;
+      border: 3px solid var(--text);
+      border-left-color: transparent;
+      border-right-color: transparent;
+      border-bottom: 0;
+      border-radius: 18px 18px 0 0;
+      position: relative;
+    }
+
+    .wifi::after {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text);
+      position: absolute;
+      left: 4px;
+      top: 7px;
+    }
+
+    .battery {
+      width: 26px;
+      height: 13px;
+      border: 2px solid var(--text);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .battery::before {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      background: var(--text);
+      border-radius: 2px;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      right: -5px;
+      top: 3px;
+      width: 3px;
+      height: 7px;
+      border-radius: 0 3px 3px 0;
+      background: var(--text);
+    }
+
+    .appbar {
+      height: 74px;
+      padding: 10px 24px 16px;
+      display: grid;
+      grid-template-columns: 48px 1fr 88px;
+      align-items: center;
+      border-bottom: 1px solid var(--stroke-soft);
+      position: relative;
+      z-index: 2;
+    }
+
+    .menu-button,
+    .ghost-icon,
+    .bottom-item,
+    .fab {
+      border: 0;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .menu-button {
+      width: 30px;
+      height: 24px;
+      padding: 0;
+      background: transparent;
+      display: grid;
+      gap: 6px;
+    }
+
+    .menu-button span {
+      height: 2px;
+      background: var(--text);
+      border-radius: 99px;
+      display: block;
+    }
+
+    .brand {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 780;
+    }
+
+    .brand span {
+      color: var(--red);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .bell {
+      width: 25px;
+      height: 25px;
+      border: 2px solid var(--muted);
+      border-top-color: transparent;
+      border-radius: 12px 12px 8px 8px;
+      position: relative;
+    }
+
+    .bell::before {
+      content: "";
+      position: absolute;
+      top: -5px;
+      left: 8px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 2px solid var(--muted);
+    }
+
+    .bell::after {
+      content: "3";
+      position: absolute;
+      top: -10px;
+      right: -9px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--red);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 34%, #f1c9aa 0 26%, transparent 27%),
+        radial-gradient(circle at 50% 76%, #1f5d7a 0 34%, transparent 35%),
+        linear-gradient(135deg, #1d2530, #56606f);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      overflow: hidden;
+    }
+
+    main {
+      padding: 20px 12px 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .net-row {
+      display: grid;
+      grid-template-columns: 1fr 122px;
+      gap: 16px;
+      align-items: center;
+      padding: 0 10px 14px;
+    }
+
+    .label {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .net-value {
+      margin-top: 8px;
+      font-size: clamp(44px, 14vw, 58px);
+      font-weight: 820;
+      line-height: 0.95;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .net-change {
+      margin-top: 12px;
+      color: var(--red);
+      font-size: 19px;
+      font-weight: 760;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .net-change span {
+      color: var(--muted);
+      font-weight: 500;
+      margin-left: 6px;
+    }
+
+    .health-ring {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(var(--red) 0 88%, rgba(255, 255, 255, 0.1) 88% 100%);
+      position: relative;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 35px rgba(255, 38, 56, 0.18);
+    }
+
+    .health-ring::after {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border-radius: 50%;
+      background: #0b0e13;
+      box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.04);
+    }
+
+    .health-copy {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      display: grid;
+      gap: 2px;
+    }
+
+    .health-copy small {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 10px;
+      font-weight: 760;
+      line-height: 1.15;
+    }
+
+    .health-copy strong {
+      font-size: 32px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .health-copy span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .panel {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+        var(--panel);
+      border: 1px solid var(--stroke);
+      border-radius: var(--card-radius);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .chart-panel {
+      padding: 12px 14px 10px;
+    }
+
+    .chart-head {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 2px;
+    }
+
+    .select {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      border: 1px solid var(--stroke-soft);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .wealth-chart {
+      height: 194px;
+      width: 100%;
+    }
+
+    .wealth-chart text {
+      fill: var(--muted);
+      font-size: 11px;
+    }
+
+    .wealth-chart .gridline {
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-dasharray: 3 4;
+    }
+
+    .distribution {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 16px;
+      padding: 18px 14px;
+    }
+
+    .panel-title {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 780;
+      font-size: 12px;
+      line-height: 1.25;
+      margin-bottom: 14px;
+    }
+
+    .donut-area {
+      display: grid;
+      align-content: start;
+    }
+
+    .donut {
+      width: 132px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      margin: 0 auto;
+      background: conic-gradient(
+        #ff2638 0 22%,
+        #b91929 22% 61%,
+        #651f26 61% 77%,
+        #96323c 77% 85%,
+        #353940 85% 92%,
+        #59606a 92% 100%
+      );
+      position: relative;
+      box-shadow: 0 0 34px rgba(255, 38, 56, 0.18);
+    }
+
+    .donut::after {
+      content: "128.540 €\A TOTAL";
+      white-space: pre;
+      position: absolute;
+      inset: 37px;
+      border-radius: 50%;
+      background: #080b10;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 780;
+      line-height: 1.35;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    .distribution-list {
+      border-left: 1px solid var(--stroke-soft);
+      padding-left: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .dist-row {
+      display: grid;
+      grid-template-columns: 12px 1fr auto 44px;
+      gap: 10px;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .dist-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .dist-row strong {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dist-row span:last-child {
+      color: var(--muted);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .coach {
+      padding: 18px 12px 14px;
+      position: relative;
+    }
+
+    .coach-top {
+      display: grid;
+      grid-template-columns: 40px 1fr 92px;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .brain {
+      width: 32px;
+      height: 32px;
+      color: var(--red);
+    }
+
+    .coach-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 810;
+      text-transform: uppercase;
+      font-size: 15px;
+    }
+
+    .ia-chip {
+      color: var(--muted);
+      border: 1px solid var(--stroke);
+      border-radius: 8px;
+      padding: 2px 7px;
+      font-size: 11px;
+      text-transform: none;
+      font-weight: 700;
+    }
+
+    .coach-copy {
+      color: #f0f2f6;
+      line-height: 1.35;
+      margin: 12px 0 16px;
+      font-size: 14px;
+    }
+
+    .bot {
+      width: 88px;
+      height: 88px;
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 39% 43%, var(--red) 0 6px, transparent 7px),
+        radial-gradient(circle at 64% 43%, var(--red) 0 6px, transparent 7px),
+        linear-gradient(145deg, #3a1016, #161a20 52%, #681b26);
+      box-shadow: 0 0 34px rgba(255, 38, 56, 0.55);
+      position: relative;
+      justify-self: end;
+      margin-top: 8px;
+    }
+
+    .bot::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 24px;
+      height: 36px;
+      border-radius: 18px;
+      background: #080b10;
+      border: 1px solid rgba(255, 38, 56, 0.35);
+    }
+
+    .bot::after {
+      content: "";
+      position: absolute;
+      left: 38px;
+      top: -13px;
+      width: 12px;
+      height: 18px;
+      border: 2px solid var(--red);
+      border-bottom: 0;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+    }
+
+    .quick {
+      min-height: 72px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--stroke);
+      border-radius: var(--small-radius);
+      color: var(--text);
+      padding: 10px 8px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 7px;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .quick svg {
+      width: 24px;
+      height: 24px;
+      color: var(--red);
+      stroke-width: 1.9;
+    }
+
+    .assets {
+      padding: 16px 12px 14px;
+    }
+
+    .assets-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .see-all {
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .asset-card {
+      min-height: 138px;
+      border-radius: var(--small-radius);
+      border: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, 0.025);
+      padding: 12px 9px;
+      display: grid;
+      align-content: start;
+      gap: 8px;
+    }
+
+    .asset-card svg {
+      width: 24px;
+      height: 24px;
+      color: var(--red);
+      stroke-width: 1.8;
+    }
+
+    .asset-card h3 {
+      color: var(--muted);
+      margin: 0;
+      text-transform: uppercase;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .asset-value {
+      font-size: 22px;
+      font-weight: 790;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .asset-change {
+      color: var(--green);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .asset-change.negative {
+      color: var(--red);
+    }
+
+    .asset-lines {
+      border-top: 1px solid var(--stroke-soft);
+      padding-top: 9px;
+      display: grid;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .asset-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--text);
+    }
+
+    .asset-line span:first-child {
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(100%, 430px);
+      height: 76px;
+      padding: 6px 18px 12px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: end;
+      background: rgba(7, 9, 13, 0.92);
+      border-top: 1px solid var(--stroke);
+      backdrop-filter: blur(18px);
+      z-index: 5;
+    }
+
+    .bottom-item {
+      background: transparent;
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .bottom-item svg {
+      width: 24px;
+      height: 24px;
+      stroke-width: 1.8;
+    }
+
+    .bottom-item.active {
+      color: var(--red);
+    }
+
+    .fab {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #ff3647, #df1527);
+      display: grid;
+      place-items: center;
+      margin: 0 auto 6px;
+      box-shadow: 0 14px 32px rgba(255, 38, 56, 0.34);
+    }
+
+    .fab svg {
+      width: 28px;
+      height: 28px;
+      stroke-width: 2;
+    }
+
+    .home-indicator {
+      position: fixed;
+      left: 50%;
+      bottom: 5px;
+      transform: translateX(-50%);
+      width: 138px;
+      height: 4px;
+      border-radius: 99px;
+      background: white;
+      z-index: 6;
+    }
+
+    @media (min-width: 860px) {
+      body {
+        padding: 24px 0;
+      }
+
+      .screen {
+        border-radius: 34px;
+        min-height: calc(100vh - 48px);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      .bottom-nav,
+      .home-indicator {
+        position: absolute;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .net-row,
+      .distribution,
+      .coach-top,
+      .asset-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .health-ring,
+      .bot {
+        justify-self: center;
+      }
+
+      .distribution-list {
+        border-left: 0;
+        border-top: 1px solid var(--stroke-soft);
+        padding-left: 0;
+        padding-top: 14px;
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <div class="status">
+      <span>9:41</span>
+      <div class="status-icons">
+        <div class="signal" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <div class="wifi" aria-hidden="true"></div>
+        <div class="battery" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <header class="appbar">
+      <button class="menu-button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+      <div class="brand">FinPilot <span>AI</span></div>
+      <div class="actions">
+        <div class="bell" aria-label="3 notificaciones"></div>
+        <div class="avatar" aria-label="Perfil"></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="net-row">
+        <div>
+          <div class="label">Patrimonio neto</div>
+          <div class="net-value">128.540 €</div>
+          <div class="net-change">+2.140 € (1,69%) <span>este mes</span></div>
+        </div>
+        <div class="health-ring" aria-label="Salud financiera 88 de 100">
+          <div class="health-copy">
+            <small>Salud<br>financiera</small>
+            <strong>88</strong>
+            <span>/100</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel chart-panel">
+        <div class="chart-head">
+          <div class="select">12 meses</div>
+        </div>
+        <svg class="wealth-chart" viewBox="0 0 390 194" role="img" aria-label="Evolucion del patrimonio neto">
+          <defs>
+            <linearGradient id="lineArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff2638" stop-opacity="0.34"/>
+              <stop offset="100%" stop-color="#ff2638" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <g>
+            <line class="gridline" x1="42" x2="370" y1="24" y2="24"/>
+            <line class="gridline" x1="42" x2="370" y1="62" y2="62"/>
+            <line class="gridline" x1="42" x2="370" y1="100" y2="100"/>
+            <line class="gridline" x1="42" x2="370" y1="138" y2="138"/>
+          </g>
+          <text x="6" y="28">140K €</text>
+          <text x="6" y="66">120K €</text>
+          <text x="6" y="104">100K €</text>
+          <text x="10" y="142">80K €</text>
+          <path d="M52,150 L70,145 L87,134 L104,126 L122,124 L139,116 L156,110 L173,107 L188,96 L205,88 L222,91 L239,82 L255,75 L272,72 L290,60 L307,43 L326,46 L342,35 L360,29 L374,28 L374,170 L52,170 Z" fill="url(#lineArea)"/>
+          <path d="M52,150 L70,145 L87,134 L104,126 L122,124 L139,116 L156,110 L173,107 L188,96 L205,88 L222,91 L239,82 L255,75 L272,72 L290,60 L307,43 L326,46 L342,35 L360,29 L374,28" fill="none" stroke="#ff2638" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="374" cy="28" r="5" fill="#ff2638"/>
+          <text x="52" y="184">MAY 2023</text>
+          <text x="155" y="184">NOV 2023</text>
+          <text x="285" y="184">MAY 2024</text>
+        </svg>
+      </section>
+
+      <section class="panel distribution">
+        <div class="donut-area">
+          <div class="panel-title">Distribucion del patrimonio</div>
+          <div class="donut" aria-label="Distribucion del patrimonio total"></div>
+        </div>
+        <div class="distribution-list">
+          <div class="dist-row"><i class="dist-dot"></i><span>Bancos</span><strong>27.850 €</strong><span>21,7%</span></div>
+          <div class="dist-row"><i class="dist-dot" style="background:#b91929"></i><span>Inversiones</span><strong>50.000 €</strong><span>38,9%</span></div>
+          <div class="dist-row"><i class="dist-dot" style="background:#651f26"></i><span>Criptomonedas</span><strong>20.300 €</strong><span>15,8%</span></div>
+          <div class="dist-row"><i class="dist-dot" style="background:#96323c"></i><span>Oro y Metales</span><strong>10.200 €</strong><span>7,9%</span></div>
+          <div class="dist-row"><i class="dist-dot" style="background:#353940"></i><span>Efectivo</span><strong>8.190 €</strong><span>6,4%</span></div>
+          <div class="dist-row"><i class="dist-dot" style="background:#59606a"></i><span>Otros Activos</span><strong>12.000 €</strong><span>9,3%</span></div>
+        </div>
+      </section>
+
+      <section class="panel coach">
+        <div class="coach-top">
+          <svg class="brain" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M11 5C7 5 5 8 6 11C3 12 3 17 6 18C4 21 7 26 11 24C12 27 17 27 18 24C22 27 27 24 26 20C30 18 29 12 26 11C27 8 24 5 21 6C19 2 13 2 11 5Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 9V23M20 8V23M8 14H13M19 14H25M9 20H14M18 19H24" stroke="currentColor" stroke-width="1.6"/>
+          </svg>
+          <div>
+            <div class="coach-title">Coach Financiero <span class="ia-chip">IA</span></div>
+            <p class="coach-copy">Este mes tu patrimonio ha aumentado un 1,7%. Mantienes el 18% del patrimonio en liquidez, por encima del objetivo del 10%. Podrias invertir aproximadamente 6.000 € sin comprometer tu fondo de emergencia.</p>
+          </div>
+          <div class="bot" aria-hidden="true"></div>
+        </div>
+        <div class="quick-grid">
+          <button class="quick">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 16L9 11L13 15L20 8M15 8H20V13" stroke="currentColor"/></svg>
+            <span>¿Donde invierto este mes?</span>
+          </button>
+          <button class="quick">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3V12H21C21 17 17 21 12 21S3 17 3 12S7 3 12 3Z" stroke="currentColor"/><path d="M15 3.5C18 4.5 20 7 20.5 10H15V3.5Z" stroke="currentColor"/></svg>
+            <span>¿Como va mi patrimonio?</span>
+          </button>
+          <button class="quick">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor"/><circle cx="12" cy="12" r="4" stroke="currentColor"/><path d="M12 12L19 5" stroke="currentColor"/></svg>
+            <span>¿Voy camino de mis objetivos?</span>
+          </button>
+          <button class="quick">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4L21 20H3L12 4Z" stroke="currentColor"/><path d="M12 9V14M12 17H12.01" stroke="currentColor"/></svg>
+            <span>Riesgos detectados</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="panel assets">
+        <div class="assets-head">
+          <div class="panel-title" style="margin:0">Resumen de activos</div>
+          <div class="see-all">Ver todos</div>
+        </div>
+        <div class="asset-grid">
+          <article class="asset-card">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M3 9L12 4L21 9M5 10H19M6 10V19M10 10V19M14 10V19M18 10V19M4 19H20" stroke="currentColor"/></svg>
+            <h3>Liquidez</h3>
+            <div class="asset-value">7.120 €</div>
+            <div class="asset-change">+320 € este mes</div>
+            <div class="asset-lines">
+              <div class="asset-line"><span>Santander</span><span>4.250 €</span></div>
+              <div class="asset-line"><span>BBVA</span><span>2.180 €</span></div>
+              <div class="asset-line"><span>Efectivo</span><span>690 €</span></div>
+            </div>
+          </article>
+          <article class="asset-card">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 19H21M6 17V9M11 17V5M16 17V12M21 17V7M4 13L9 9L13 12L20 5" stroke="currentColor"/></svg>
+            <h3>Inversiones</h3>
+            <div class="asset-value">50.000 €</div>
+            <div class="asset-change">+1.250 € este mes</div>
+            <div class="asset-lines">
+              <div class="asset-line"><span>ETF</span><span>38.000 €</span></div>
+              <div class="asset-line"><span>Acciones</span><span>12.000 €</span></div>
+            </div>
+          </article>
+          <article class="asset-card">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M11 4V20M15 4V20M8 7H14.5C17 7 18 8.2 18 10C18 11.4 17.2 12.4 15.5 12.7C17.7 12.9 19 14 19 16C19 18.2 17.4 19 14.5 19H8M8 7V19" stroke="currentColor"/></svg>
+            <h3>Criptomonedas</h3>
+            <div class="asset-value">22.300 €</div>
+            <div class="asset-change negative">-230 € este mes</div>
+            <div class="asset-lines">
+              <div class="asset-line"><span>Bitcoin</span><span>18.000 €</span></div>
+              <div class="asset-line"><span>Ethereum</span><span>2.300 €</span></div>
+            </div>
+          </article>
+          <article class="asset-card">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3L20 7L12 11L4 7L12 3Z" stroke="currentColor"/><path d="M4 12L12 16L20 12M4 17L12 21L20 17" stroke="currentColor"/></svg>
+            <h3>Oro y Metales</h3>
+            <div class="asset-value">10.200 €</div>
+            <div class="asset-change">+150 € este mes</div>
+            <div class="asset-lines">
+              <div class="asset-line"><span>Oro</span><span>10.200 €</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegacion principal">
+      <button class="bottom-item active">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 11L12 4L20 11V20H15V14H9V20H4V11Z" stroke="currentColor"/></svg>
+        <span>Inicio</span>
+      </button>
+      <button class="bottom-item">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 7H19M15 3L19 7L15 11M17 17H5M9 13L5 17L9 21" stroke="currentColor"/></svg>
+        <span>Movimientos</span>
+      </button>
+      <button class="fab" aria-label="Anadir">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="white"/></svg>
+      </button>
+      <button class="bottom-item">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 20V11M10 20V5M15 20V8M20 20V3" stroke="currentColor"/></svg>
+        <span>Inversiones</span>
+      </button>
+      <button class="bottom-item">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="8" width="14" height="10" rx="4" stroke="currentColor"/><path d="M9 8V5M15 8V5M9 13H9.01M15 13H15.01" stroke="currentColor"/></svg>
+        <span>Coach IA</span>
+      </button>
+    </nav>
+    <div class="home-indicator"></div>
+  </div>
+</body>
+</html>
