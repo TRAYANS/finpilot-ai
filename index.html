@@ -6,867 +6,968 @@
   <title>FinPilot AI - Dashboard Prototype</title>
   <style>
     :root {
-      --bg: #f6f7f9;
-      --surface: #ffffff;
-      --surface-2: #eef1f5;
-      --line: #d9dee7;
-      --text: #111827;
-      --muted: #667085;
-      --blue: #2563eb;
-      --navy: #0f2747;
-      --green: #16a34a;
-      --amber: #d97706;
-      --red: #dc2626;
-      --cash: #38bdf8;
-      --stocks: #2563eb;
-      --crypto: #f59e0b;
-      --metal: #c9a227;
-      --real: #10b981;
-      --other: #8b5cf6;
-      --santander: #e11d48;
-      --bbva: #1d4ed8;
-      --revolut: #111827;
-      --ing: #f97316;
-      --cash-wallet: #059669;
-      --radius: 8px;
+      --bg: #05070a;
+      --panel: rgba(16, 19, 25, 0.88);
+      --panel-strong: rgba(21, 25, 33, 0.94);
+      --stroke: rgba(255, 255, 255, 0.11);
+      --stroke-soft: rgba(255, 255, 255, 0.07);
+      --text: #f6f7fb;
+      --muted: #a2a7b2;
+      --faint: #666d7a;
+      --red: #ff2638;
+      --red-dark: #8e1420;
+      --green: #37c759;
+      --orange: #f7a928;
+      --card-radius: 18px;
+      --small-radius: 12px;
     }
 
     * {
       box-sizing: border-box;
     }
 
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
     body {
       margin: 0;
-      background: var(--bg);
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 30% 0%, rgba(255, 255, 255, 0.055), transparent 24rem),
+        radial-gradient(circle at 80% 28%, rgba(255, 38, 56, 0.12), transparent 22rem),
+        linear-gradient(180deg, #080b10 0%, #040609 100%);
       color: var(--text);
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       letter-spacing: 0;
     }
 
-    .app {
+    .screen {
+      width: min(100%, 430px);
+      margin: 0 auto;
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 248px minmax(0, 1fr);
+      padding-bottom: 92px;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+      background-size: 52px 52px;
+      box-shadow: 0 0 80px rgba(0, 0, 0, 0.55);
+      position: relative;
+      overflow: hidden;
     }
 
-    aside {
-      background: #07111f;
-      color: white;
-      padding: 24px 18px;
-      position: sticky;
-      top: 0;
-      height: 100vh;
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: 60px -60px auto -60px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 65%);
+      pointer-events: none;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 750;
-      font-size: 18px;
-      margin-bottom: 28px;
-    }
-
-    .mark {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, #2563eb, #10b981);
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    nav {
-      display: grid;
-      gap: 4px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #c7d2e3;
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      text-decoration: none;
-    }
-
-    .nav-item.active {
-      background: rgba(255, 255, 255, 0.11);
-      color: white;
-    }
-
-    main {
-      padding: 24px;
-    }
-
-    .topbar {
+    .status {
+      height: 44px;
+      padding: 16px 28px 0;
       display: flex;
       justify-content: space-between;
-      gap: 16px;
       align-items: center;
-      margin-bottom: 18px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      line-height: 1.15;
-    }
-
-    .date {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 4px;
-    }
-
-    .health {
-      border: 1px solid #bbf7d0;
-      background: #ecfdf3;
-      color: #14532d;
-      border-radius: 8px;
-      padding: 10px 12px;
-      min-width: 148px;
-      text-align: right;
-    }
-
-    .health strong {
-      font-size: 24px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .health span {
-      display: block;
-      font-size: 12px;
-      color: #166534;
-    }
-
-    .coach {
-      background: #0f2747;
-      color: white;
-      border-radius: var(--radius);
-      padding: 18px;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 16px;
-      margin-bottom: 18px;
-      box-shadow: 0 16px 40px rgba(15, 39, 71, 0.18);
-    }
-
-    .coach-label {
-      color: #bfdbfe;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .coach p {
-      margin: 0;
-      max-width: 980px;
-      line-height: 1.5;
       font-size: 15px;
+      font-weight: 760;
+      position: relative;
+      z-index: 2;
     }
 
-    .quick-actions {
+    .status-icons {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-content: start;
-      justify-content: flex-end;
-      max-width: 430px;
+      align-items: center;
+      gap: 7px;
     }
 
-    button {
+    .signal {
+      display: flex;
+      align-items: end;
+      gap: 2px;
+      height: 15px;
+    }
+
+    .signal span {
+      width: 3px;
+      border-radius: 4px;
+      background: var(--text);
+      display: block;
+    }
+
+    .signal span:nth-child(1) { height: 6px; }
+    .signal span:nth-child(2) { height: 9px; }
+    .signal span:nth-child(3) { height: 12px; }
+    .signal span:nth-child(4) { height: 15px; }
+
+    .wifi {
+      width: 18px;
+      height: 13px;
+      border: 3px solid var(--text);
+      border-left-color: transparent;
+      border-right-color: transparent;
+      border-bottom: 0;
+      border-radius: 18px 18px 0 0;
+      position: relative;
+    }
+
+    .wifi::after {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text);
+      position: absolute;
+      left: 4px;
+      top: 7px;
+    }
+
+    .battery {
+      width: 26px;
+      height: 13px;
+      border: 2px solid var(--text);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .battery::before {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      background: var(--text);
+      border-radius: 2px;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      right: -5px;
+      top: 3px;
+      width: 3px;
+      height: 7px;
+      border-radius: 0 3px 3px 0;
+      background: var(--text);
+    }
+
+    .appbar {
+      height: 74px;
+      padding: 10px 24px 16px;
+      display: grid;
+      grid-template-columns: 48px 1fr 88px;
+      align-items: center;
+      border-bottom: 1px solid var(--stroke-soft);
+      position: relative;
+      z-index: 2;
+    }
+
+    .menu-button,
+    .ghost-icon,
+    .bottom-item,
+    .fab {
       border: 0;
-      background: rgba(255, 255, 255, 0.12);
-      color: white;
-      border-radius: 8px;
-      padding: 9px 11px;
+      color: var(--text);
       font: inherit;
-      font-size: 13px;
       cursor: pointer;
     }
 
-    .grid {
+    .menu-button {
+      width: 30px;
+      height: 24px;
+      padding: 0;
+      background: transparent;
       display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
-      gap: 18px;
+      gap: 6px;
     }
 
-    .bank-focus {
-      margin-bottom: 18px;
-      padding: 20px;
+    .menu-button span {
+      height: 2px;
+      background: var(--text);
+      border-radius: 99px;
+      display: block;
     }
 
-    .bank-hero {
-      display: grid;
-      grid-template-columns: minmax(250px, 0.9fr) minmax(320px, 1.1fr) minmax(250px, 0.9fr);
-      gap: 22px;
+    .brand {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 780;
+    }
+
+    .brand span {
+      color: var(--red);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
       align-items: center;
+      gap: 14px;
     }
 
-    .bank-summary {
+    .bell {
+      width: 25px;
+      height: 25px;
+      border: 2px solid var(--muted);
+      border-top-color: transparent;
+      border-radius: 12px 12px 8px 8px;
+      position: relative;
+    }
+
+    .bell::before {
+      content: "";
+      position: absolute;
+      top: -5px;
+      left: 8px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 2px solid var(--muted);
+    }
+
+    .bell::after {
+      content: "3";
+      position: absolute;
+      top: -10px;
+      right: -9px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--red);
+      color: white;
       display: grid;
-      gap: 10px;
-      align-content: center;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 800;
     }
 
-    .bank-total {
-      font-size: clamp(36px, 5vw, 64px);
-      font-weight: 800;
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 34%, #f1c9aa 0 26%, transparent 27%),
+        radial-gradient(circle at 50% 76%, #1f5d7a 0 34%, transparent 35%),
+        linear-gradient(135deg, #1d2530, #56606f);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      overflow: hidden;
+    }
+
+    main {
+      padding: 20px 12px 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .net-row {
+      display: grid;
+      grid-template-columns: 1fr 122px;
+      gap: 16px;
+      align-items: center;
+      padding: 0 10px 14px;
+    }
+
+    .label {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .net-value {
+      margin-top: 8px;
+      font-size: clamp(44px, 14vw, 58px);
+      font-weight: 820;
       line-height: 0.95;
       font-variant-numeric: tabular-nums;
-      color: var(--navy);
+      white-space: nowrap;
     }
 
-    .bank-note {
+    .net-change {
+      margin-top: 12px;
+      color: var(--red);
+      font-size: 19px;
+      font-weight: 760;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .net-change span {
       color: var(--muted);
-      font-size: 14px;
-      line-height: 1.45;
-      max-width: 380px;
+      font-weight: 500;
+      margin-left: 6px;
     }
 
-    .bank-donut-wrap {
-      display: grid;
-      place-items: center;
-      min-height: 330px;
-    }
-
-    .bank-donut {
-      width: min(310px, 72vw);
-      aspect-ratio: 1;
+    .health-ring {
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      background: conic-gradient(
-        var(--santander) 0 49%,
-        var(--bbva) 49% 74%,
-        var(--revolut) 74% 91%,
-        var(--ing) 91% 96%,
-        var(--cash-wallet) 96% 100%
-      );
+      background: conic-gradient(var(--red) 0 88%, rgba(255, 255, 255, 0.1) 88% 100%);
       position: relative;
-      box-shadow: 0 22px 45px rgba(15, 39, 71, 0.12);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 35px rgba(255, 38, 56, 0.18);
     }
 
-    .bank-donut::after {
-      content: "8.730 EUR";
+    .health-ring::after {
+      content: "";
       position: absolute;
-      inset: 68px;
+      inset: 9px;
       border-radius: 50%;
-      background: white;
-      display: grid;
-      place-items: center;
-      color: var(--navy);
-      font-size: clamp(22px, 3vw, 30px);
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
+      background: #0b0e13;
+      box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.04);
+    }
+
+    .health-copy {
+      position: relative;
+      z-index: 1;
       text-align: center;
-      box-shadow: inset 0 0 0 1px var(--line);
-    }
-
-    .bank-cells {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 20px;
+      gap: 2px;
     }
 
-    .bank-cell {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: #fbfcfe;
-      padding: 14px;
-      min-height: 126px;
-      display: grid;
-      gap: 12px;
-      align-content: space-between;
-    }
-
-    .bank-cell-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: flex-start;
-    }
-
-    .bank-logo {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      display: grid;
-      place-items: center;
-      color: white;
-      font-weight: 800;
-      font-size: 12px;
-      flex: 0 0 auto;
-    }
-
-    .bank-cell h3 {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.2;
-    }
-
-    .bank-cell-value {
-      font-size: 22px;
-      font-weight: 780;
-      font-variant-numeric: tabular-nums;
-      color: var(--text);
-    }
-
-    .bank-cell-meta {
+    .health-copy small {
       color: var(--muted);
-      font-size: 12px;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
+      text-transform: uppercase;
+      font-size: 10px;
+      font-weight: 760;
+      line-height: 1.15;
     }
 
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 16px;
-    }
-
-    .hero-metric {
-      display: grid;
-      gap: 4px;
-      margin-bottom: 12px;
-    }
-
-    .eyebrow {
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 650;
-    }
-
-    .net-worth {
-      font-size: clamp(34px, 5vw, 56px);
-      font-weight: 780;
+    .health-copy strong {
+      font-size: 32px;
       line-height: 1;
       font-variant-numeric: tabular-nums;
     }
 
-    .positive {
-      color: var(--green);
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .chart {
-      height: 240px;
-      position: relative;
-      border-top: 1px solid var(--surface-2);
-      margin-top: 16px;
-      padding-top: 12px;
-    }
-
-    .chart svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 6px;
-      margin-top: 10px;
-    }
-
-    .tab {
+    .health-copy span {
       color: var(--muted);
-      background: var(--surface-2);
-      border-radius: 8px;
-      padding: 6px 9px;
       font-size: 12px;
-      font-weight: 650;
     }
 
-    .tab.active {
-      color: white;
-      background: var(--blue);
+    .panel {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+        var(--panel);
+      border: 1px solid var(--stroke);
+      border-radius: var(--card-radius);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+      margin-bottom: 12px;
     }
 
-    .section-title {
+    .chart-panel {
+      padding: 12px 14px 10px;
+    }
+
+    .chart-head {
       display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 2px;
+    }
+
+    .select {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      border: 1px solid var(--stroke-soft);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .wealth-chart {
+      height: 194px;
+      width: 100%;
+    }
+
+    .wealth-chart text {
+      fill: var(--muted);
+      font-size: 11px;
+    }
+
+    .wealth-chart .gridline {
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-dasharray: 3 4;
+    }
+
+    .distribution {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 16px;
+      padding: 18px 14px;
+    }
+
+    .panel-title {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 780;
+      font-size: 12px;
+      line-height: 1.25;
       margin-bottom: 14px;
     }
 
-    .section-title h2 {
-      margin: 0;
-      font-size: 16px;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .donut-row {
+    .donut-area {
       display: grid;
-      grid-template-columns: 170px minmax(0, 1fr);
-      gap: 16px;
-      align-items: center;
+      align-content: start;
     }
 
     .donut {
-      width: 160px;
-      height: 160px;
+      width: 132px;
+      aspect-ratio: 1;
       border-radius: 50%;
+      margin: 0 auto;
       background: conic-gradient(
-        var(--stocks) 0 39%,
-        var(--crypto) 39% 55%,
-        var(--cash) 55% 73%,
-        var(--metal) 73% 80%,
-        var(--real) 80% 92%,
-        var(--other) 92% 100%
+        #ff2638 0 22%,
+        #b91929 22% 61%,
+        #651f26 61% 77%,
+        #96323c 77% 85%,
+        #353940 85% 92%,
+        #59606a 92% 100%
       );
       position: relative;
+      box-shadow: 0 0 34px rgba(255, 38, 56, 0.18);
     }
 
     .donut::after {
-      content: "128.5k";
+      content: "128.540 €\A TOTAL";
+      white-space: pre;
       position: absolute;
-      inset: 34px;
+      inset: 37px;
       border-radius: 50%;
-      background: white;
+      background: #080b10;
       display: grid;
       place-items: center;
+      text-align: center;
+      font-size: 18px;
       font-weight: 780;
-      color: var(--navy);
-      font-variant-numeric: tabular-nums;
+      line-height: 1.35;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     }
 
-    .legend {
+    .distribution-list {
+      border-left: 1px solid var(--stroke-soft);
+      padding-left: 16px;
       display: grid;
+      gap: 14px;
+    }
+
+    .dist-row {
+      display: grid;
+      grid-template-columns: 12px 1fr auto 44px;
       gap: 10px;
-    }
-
-    .legend-item {
-      display: grid;
-      grid-template-columns: 12px minmax(0, 1fr) auto;
-      gap: 8px;
       align-items: center;
-      font-size: 13px;
+      font-size: 14px;
     }
 
-    .dot {
-      width: 10px;
-      height: 10px;
+    .dist-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
+      background: var(--red);
     }
 
-    .amount {
-      font-weight: 720;
+    .dist-row strong {
       font-variant-numeric: tabular-nums;
+    }
+
+    .dist-row span:last-child {
+      color: var(--muted);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .coach {
+      padding: 18px 12px 14px;
+      position: relative;
+    }
+
+    .coach-top {
+      display: grid;
+      grid-template-columns: 40px 1fr 92px;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .brain {
+      width: 32px;
+      height: 32px;
+      color: var(--red);
+    }
+
+    .coach-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 810;
+      text-transform: uppercase;
+      font-size: 15px;
+    }
+
+    .ia-chip {
+      color: var(--muted);
+      border: 1px solid var(--stroke);
+      border-radius: 8px;
+      padding: 2px 7px;
+      font-size: 11px;
+      text-transform: none;
+      font-weight: 700;
+    }
+
+    .coach-copy {
+      color: #f0f2f6;
+      line-height: 1.35;
+      margin: 12px 0 16px;
+      font-size: 14px;
+    }
+
+    .bot {
+      width: 88px;
+      height: 88px;
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 39% 43%, var(--red) 0 6px, transparent 7px),
+        radial-gradient(circle at 64% 43%, var(--red) 0 6px, transparent 7px),
+        linear-gradient(145deg, #3a1016, #161a20 52%, #681b26);
+      box-shadow: 0 0 34px rgba(255, 38, 56, 0.55);
+      position: relative;
+      justify-self: end;
+      margin-top: 8px;
+    }
+
+    .bot::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 24px;
+      height: 36px;
+      border-radius: 18px;
+      background: #080b10;
+      border: 1px solid rgba(255, 38, 56, 0.35);
+    }
+
+    .bot::after {
+      content: "";
+      position: absolute;
+      left: 38px;
+      top: -13px;
+      width: 12px;
+      height: 18px;
+      border: 2px solid var(--red);
+      border-bottom: 0;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+    }
+
+    .quick {
+      min-height: 72px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--stroke);
+      border-radius: var(--small-radius);
+      color: var(--text);
+      padding: 10px 8px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 7px;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .quick svg {
+      width: 24px;
+      height: 24px;
+      color: var(--red);
+      stroke-width: 1.9;
+    }
+
+    .assets {
+      padding: 16px 12px 14px;
+    }
+
+    .assets-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .see-all {
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 760;
     }
 
     .asset-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 18px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 7px;
     }
 
     .asset-card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 14px;
-      min-height: 168px;
+      min-height: 138px;
+      border-radius: var(--small-radius);
+      border: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, 0.025);
+      padding: 12px 9px;
+      display: grid;
+      align-content: start;
+      gap: 8px;
     }
 
-    .asset-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
+    .asset-card svg {
+      width: 24px;
+      height: 24px;
+      color: var(--red);
+      stroke-width: 1.8;
     }
 
-    .asset-head h3 {
-      margin: 0;
-      font-size: 15px;
-    }
-
-    .pill {
-      background: var(--surface-2);
+    .asset-card h3 {
       color: var(--muted);
-      border-radius: 8px;
-      padding: 4px 7px;
-      font-size: 12px;
-      font-weight: 700;
+      margin: 0;
+      text-transform: uppercase;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .asset-value {
+      font-size: 22px;
+      font-weight: 790;
+      font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
 
-    .rows {
-      display: grid;
-      gap: 9px;
+    .asset-change {
+      color: var(--green);
+      font-size: 11px;
+      white-space: nowrap;
     }
 
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      font-size: 13px;
+    .asset-change.negative {
+      color: var(--red);
     }
 
-    .recommendations {
-      display: grid;
-      gap: 10px;
-    }
-
-    .rec {
-      border-left: 4px solid var(--blue);
-      background: #f8fafc;
-      border-radius: 6px;
-      padding: 10px 12px;
-      font-size: 13px;
-      line-height: 1.4;
-    }
-
-    .rec.warn {
-      border-left-color: var(--amber);
-    }
-
-    .score-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .score-row {
+    .asset-lines {
+      border-top: 1px solid var(--stroke-soft);
+      padding-top: 9px;
       display: grid;
       gap: 6px;
+      font-size: 11px;
     }
 
-    .score-top {
+    .asset-line {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 700;
+      gap: 8px;
+      color: var(--text);
     }
 
-    .bar {
-      height: 7px;
-      border-radius: 99px;
-      background: var(--surface-2);
+    .asset-line span:first-child {
+      color: var(--text);
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    .bar span {
-      display: block;
-      height: 100%;
-      background: var(--green);
-      border-radius: inherit;
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(100%, 430px);
+      height: 76px;
+      padding: 6px 18px 12px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: end;
+      background: rgba(7, 9, 13, 0.92);
+      border-top: 1px solid var(--stroke);
+      backdrop-filter: blur(18px);
+      z-index: 5;
     }
 
-    @media (max-width: 980px) {
-      .app {
+    .bottom-item {
+      background: transparent;
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .bottom-item svg {
+      width: 24px;
+      height: 24px;
+      stroke-width: 1.8;
+    }
+
+    .bottom-item.active {
+      color: var(--red);
+    }
+
+    .fab {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #ff3647, #df1527);
+      display: grid;
+      place-items: center;
+      margin: 0 auto 6px;
+      box-shadow: 0 14px 32px rgba(255, 38, 56, 0.34);
+    }
+
+    .fab svg {
+      width: 28px;
+      height: 28px;
+      stroke-width: 2;
+    }
+
+    .home-indicator {
+      position: fixed;
+      left: 50%;
+      bottom: 5px;
+      transform: translateX(-50%);
+      width: 138px;
+      height: 4px;
+      border-radius: 99px;
+      background: white;
+      z-index: 6;
+    }
+
+    @media (min-width: 860px) {
+      body {
+        padding: 24px 0;
+      }
+
+      .screen {
+        border-radius: 34px;
+        min-height: calc(100vh - 48px);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      .bottom-nav,
+      .home-indicator {
+        position: absolute;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .net-row,
+      .distribution,
+      .coach-top,
+      .asset-grid {
         grid-template-columns: 1fr;
       }
 
-      aside {
-        display: none;
+      .health-ring,
+      .bot {
+        justify-self: center;
       }
 
-      main {
-        padding: 16px;
+      .distribution-list {
+        border-left: 0;
+        border-top: 1px solid var(--stroke-soft);
+        padding-left: 0;
+        padding-top: 14px;
       }
 
-      .coach,
-      .grid,
-      .asset-grid,
-      .bank-hero,
-      .bank-cells {
-        grid-template-columns: 1fr;
-      }
-
-      .quick-actions {
-        justify-content: flex-start;
-        max-width: none;
-      }
-
-      .donut-row {
-        grid-template-columns: 1fr;
-        justify-items: center;
-      }
-
-      .bank-donut-wrap {
-        min-height: 250px;
-      }
-
-      .bank-cell {
-        min-height: 112px;
+      .quick-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside>
-      <div class="brand">
-        <div class="mark">FP</div>
-        <span>FinPilot AI</span>
+  <div class="screen">
+    <div class="status">
+      <span>9:41</span>
+      <div class="status-icons">
+        <div class="signal" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <div class="wifi" aria-hidden="true"></div>
+        <div class="battery" aria-hidden="true"></div>
       </div>
-      <nav>
-        <a class="nav-item active" href="#">Dashboard</a>
-        <a class="nav-item" href="#">Patrimonio</a>
-        <a class="nav-item" href="#">Movimientos</a>
-        <a class="nav-item" href="#">Inversiones</a>
-        <a class="nav-item" href="#">Coach IA</a>
-        <a class="nav-item" href="#">Objetivos</a>
-        <a class="nav-item" href="#">Analitica</a>
-        <a class="nav-item" href="#">Documentos</a>
-        <a class="nav-item" href="#">Ajustes</a>
-      </nav>
-    </aside>
+    </div>
+
+    <header class="appbar">
+      <button class="menu-button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+      <div class="brand">FinPilot <span>AI</span></div>
+      <div class="actions">
+        <div class="bell" aria-label="3 notificaciones"></div>
+        <div class="avatar" aria-label="Perfil"></div>
+      </div>
+    </header>
 
     <main>
-      <div class="topbar">
+      <section class="net-row">
         <div>
-          <h1>Dashboard patrimonial</h1>
-          <div class="date">Jueves, 2 de julio de 2026</div>
+          <div class="label">Patrimonio neto</div>
+          <div class="net-value">128.540 €</div>
+          <div class="net-change">+2.140 € (1,69%) <span>este mes</span></div>
         </div>
-        <div class="health">
-          <strong>88/100</strong>
-          <span>Salud financiera</span>
-        </div>
-      </div>
-
-      <section class="panel bank-focus">
-        <div class="section-title">
-          <h2>Capital en bancos</h2>
-          <span class="muted">Distribucion de liquidez</span>
-        </div>
-        <div class="bank-hero">
-          <div class="bank-summary">
-            <span class="eyebrow">Liquidez disponible</span>
-            <span class="bank-total">8.730 EUR</span>
-            <span class="positive">+420 EUR este mes</span>
-            <p class="bank-note">El 49 % de tu liquidez esta concentrada en Santander. Mantienes efectivo suficiente para operar y un exceso estimado de 1.200 EUR frente al objetivo de liquidez inmediata.</p>
+        <div class="health-ring" aria-label="Salud financiera 88 de 100">
+          <div class="health-copy">
+            <small>Salud<br>financiera</small>
+            <strong>88</strong>
+            <span>/100</span>
           </div>
-
-          <div class="bank-donut-wrap" aria-label="Distribucion del capital por bancos">
-            <div class="bank-donut"></div>
-          </div>
-
-          <div class="legend">
-            <div class="legend-item"><span class="dot" style="background:var(--santander)"></span><span>Banco Santander</span><span class="amount">4.250</span></div>
-            <div class="legend-item"><span class="dot" style="background:var(--bbva)"></span><span>BBVA</span><span class="amount">2.180</span></div>
-            <div class="legend-item"><span class="dot" style="background:var(--revolut)"></span><span>Revolut</span><span class="amount">1.430</span></div>
-            <div class="legend-item"><span class="dot" style="background:var(--ing)"></span><span>ING</span><span class="amount">550</span></div>
-            <div class="legend-item"><span class="dot" style="background:var(--cash-wallet)"></span><span>Efectivo</span><span class="amount">320</span></div>
-          </div>
-        </div>
-
-        <div class="bank-cells">
-          <article class="bank-cell">
-            <div class="bank-cell-top">
-              <div>
-                <h3>Banco Santander</h3>
-                <span class="muted">Cuenta principal</span>
-              </div>
-              <span class="bank-logo" style="background:var(--santander)">SAN</span>
-            </div>
-            <div>
-              <div class="bank-cell-value">4.250 EUR</div>
-              <div class="bank-cell-meta"><span>49 %</span><span>+180 EUR</span></div>
-            </div>
-          </article>
-
-          <article class="bank-cell">
-            <div class="bank-cell-top">
-              <div>
-                <h3>BBVA</h3>
-                <span class="muted">Ahorro</span>
-              </div>
-              <span class="bank-logo" style="background:var(--bbva)">BBVA</span>
-            </div>
-            <div>
-              <div class="bank-cell-value">2.180 EUR</div>
-              <div class="bank-cell-meta"><span>25 %</span><span>+90 EUR</span></div>
-            </div>
-          </article>
-
-          <article class="bank-cell">
-            <div class="bank-cell-top">
-              <div>
-                <h3>Revolut</h3>
-                <span class="muted">Operativa</span>
-              </div>
-              <span class="bank-logo" style="background:var(--revolut)">REV</span>
-            </div>
-            <div>
-              <div class="bank-cell-value">1.430 EUR</div>
-              <div class="bank-cell-meta"><span>16 %</span><span>+120 EUR</span></div>
-            </div>
-          </article>
-
-          <article class="bank-cell">
-            <div class="bank-cell-top">
-              <div>
-                <h3>ING</h3>
-                <span class="muted">Reserva</span>
-              </div>
-              <span class="bank-logo" style="background:var(--ing)">ING</span>
-            </div>
-            <div>
-              <div class="bank-cell-value">550 EUR</div>
-              <div class="bank-cell-meta"><span>6 %</span><span>+30 EUR</span></div>
-            </div>
-          </article>
-
-          <article class="bank-cell">
-            <div class="bank-cell-top">
-              <div>
-                <h3>Efectivo</h3>
-                <span class="muted">Caja</span>
-              </div>
-              <span class="bank-logo" style="background:var(--cash-wallet)">EUR</span>
-            </div>
-            <div>
-              <div class="bank-cell-value">320 EUR</div>
-              <div class="bank-cell-meta"><span>4 %</span><span>0 EUR</span></div>
-            </div>
-          </article>
         </div>
       </section>
 
-      <section class="coach">
-        <div>
-          <div class="coach-label">Coach Financiero</div>
-          <p>Este mes tu patrimonio ha aumentado un 1,7 %. Mantienes un 18 % del patrimonio en liquidez, por encima del objetivo del 10 %. Podrias invertir aproximadamente 6.000 EUR sin comprometer tu fondo de emergencia.</p>
+      <section class="panel chart-panel">
+        <div class="chart-head">
+          <div class="select">12 meses</div>
         </div>
-        <div class="quick-actions">
-          <button>Donde invierto este mes?</button>
-          <button>Como va mi patrimonio?</button>
-          <button>Voy camino de mis objetivos?</button>
-          <button>Riesgos detectados</button>
+        <svg class="wealth-chart" viewBox="0 0 390 194" role="img" aria-label="Evolucion del patrimonio neto">
+          <defs>
+            <linearGradient id="lineArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff2638" stop-opacity="0.34"/>
+              <stop offset="100%" stop-color="#ff2638" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <g>
+            <line class="gridline" x1="42" x2="370" y1="24" y2="24"/>
+            <line class="gridline" x1="42" x2="370" y1="62" y2="62"/>
+            <line class="gridline" x1="42" x2="370" y1="100" y2="100"/>
+            <line class="gridline" x1="42" x2="370" y1="138" y2="138"/>
+          </g>
+          <text x="6" y="28">140K €</text>
+          <text x="6" y="66">120K €</text>
+          <text x="6" y="104">100K €</text>
+          <text x="10" y="142">80K €</text>
+          <path d="M52,150 L70,145 L87,134 L104,126 L122,124 L139,116 L156,110 L173,107 L188,96 L205,88 L222,91 L239,82 L255,75 L272,72 L290,60 L307,43 L326,46 L342,35 L360,29 L374,28 L374,170 L52,170 Z" fill="url(#lineArea)"/>
+          <path d="M52,150 L70,145 L87,134 L104,126 L122,124 L139,116 L156,110 L173,107 L188,96 L205,88 L222,91 L239,82 L255,75 L272,72 L290,60 L307,43 L326,46 L342,35 L360,29 L374,28" fill="none" stroke="#ff2638" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="374" cy="28" r="5" fill="#ff2638"/>
+          <text x="52" y="184">MAY 2023</text>
+          <text x="155" y="184">NOV 2023</text>
+          <text x="285" y="184">MAY 2024</text>
+        </svg>
+      </section>
+
+      <section class="panel distribution">
+        <div class="donut-area">
+          <div class="panel-title">Distribucion del patrimonio</div>
+          <div class="donut" aria-label="Distribucion del patrimonio total"></div>
+        </div>
+        <div class="distribution-list">
+          <div class="dist-row"><i class="dist-dot"></i><span>Bancos</span><strong>27.850 €</strong><span>21,7%</span></div>
+          <div class="dist-row"><i class="dist-dot" style="background:#b91929"></i><span>Inversiones</span><strong>50.000 €</strong><span>38,9%</span></div>
+          <div class="dist-row"><i class="dist-dot" style="background:#651f26"></i><span>Criptomonedas</span><strong>20.300 €</strong><span>15,8%</span></div>
+          <div class="dist-row"><i class="dist-dot" style="background:#96323c"></i><span>Oro y Metales</span><strong>10.200 €</strong><span>7,9%</span></div>
+          <div class="dist-row"><i class="dist-dot" style="background:#353940"></i><span>Efectivo</span><strong>8.190 €</strong><span>6,4%</span></div>
+          <div class="dist-row"><i class="dist-dot" style="background:#59606a"></i><span>Otros Activos</span><strong>12.000 €</strong><span>9,3%</span></div>
         </div>
       </section>
 
-      <div class="grid">
-        <section class="panel">
-          <div class="hero-metric">
-            <span class="eyebrow">Patrimonio Neto</span>
-            <span class="net-worth">128.540 EUR</span>
-            <span class="positive">▲ +2.140 EUR este mes (+1,69 %)</span>
+      <section class="panel coach">
+        <div class="coach-top">
+          <svg class="brain" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M11 5C7 5 5 8 6 11C3 12 3 17 6 18C4 21 7 26 11 24C12 27 17 27 18 24C22 27 27 24 26 20C30 18 29 12 26 11C27 8 24 5 21 6C19 2 13 2 11 5Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 9V23M20 8V23M8 14H13M19 14H25M9 20H14M18 19H24" stroke="currentColor" stroke-width="1.6"/>
+          </svg>
+          <div>
+            <div class="coach-title">Coach Financiero <span class="ia-chip">IA</span></div>
+            <p class="coach-copy">Este mes tu patrimonio ha aumentado un 1,7%. Mantienes el 18% del patrimonio en liquidez, por encima del objetivo del 10%. Podrias invertir aproximadamente 6.000 € sin comprometer tu fondo de emergencia.</p>
           </div>
-          <div class="tabs">
-            <span class="tab">1M</span>
-            <span class="tab active">3M</span>
-            <span class="tab">6M</span>
-            <span class="tab">1A</span>
-            <span class="tab">Todo</span>
-          </div>
-          <div class="chart" aria-label="Evolucion del patrimonio">
-            <svg viewBox="0 0 760 240" role="img">
-              <defs>
-                <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#2563eb" stop-opacity="0.24"/>
-                  <stop offset="100%" stop-color="#2563eb" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <path d="M0,205 C70,192 96,176 145,178 C205,181 220,132 286,140 C350,149 360,112 428,114 C493,116 514,82 578,78 C647,74 690,52 760,42 L760,240 L0,240 Z" fill="url(#area)"/>
-              <path d="M0,205 C70,192 96,176 145,178 C205,181 220,132 286,140 C350,149 360,112 428,114 C493,116 514,82 578,78 C647,74 690,52 760,42" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>
-              <g stroke="#d9dee7" stroke-width="1">
-                <line x1="0" y1="60" x2="760" y2="60"/>
-                <line x1="0" y1="120" x2="760" y2="120"/>
-                <line x1="0" y1="180" x2="760" y2="180"/>
-              </g>
-            </svg>
-          </div>
-        </section>
+          <div class="bot" aria-hidden="true"></div>
+        </div>
+        <div class="quick-grid">
+          <button class="quick">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 16L9 11L13 15L20 8M15 8H20V13" stroke="currentColor"/></svg>
+            <span>¿Donde invierto este mes?</span>
+          </button>
+          <button class="quick">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3V12H21C21 17 17 21 12 21S3 17 3 12S7 3 12 3Z" stroke="currentColor"/><path d="M15 3.5C18 4.5 20 7 20.5 10H15V3.5Z" stroke="currentColor"/></svg>
+            <span>¿Como va mi patrimonio?</span>
+          </button>
+          <button class="quick">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor"/><circle cx="12" cy="12" r="4" stroke="currentColor"/><path d="M12 12L19 5" stroke="currentColor"/></svg>
+            <span>¿Voy camino de mis objetivos?</span>
+          </button>
+          <button class="quick">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4L21 20H3L12 4Z" stroke="currentColor"/><path d="M12 9V14M12 17H12.01" stroke="currentColor"/></svg>
+            <span>Riesgos detectados</span>
+          </button>
+        </div>
+      </section>
 
-        <section class="panel">
-          <div class="section-title">
-            <h2>Distribucion</h2>
-            <span class="muted">Por clase de activo</span>
-          </div>
-          <div class="donut-row">
-            <div class="donut"></div>
-            <div class="legend">
-              <div class="legend-item"><span class="dot" style="background:var(--stocks)"></span><span>Bolsa</span><span class="amount">50.000</span></div>
-              <div class="legend-item"><span class="dot" style="background:var(--crypto)"></span><span>Cripto</span><span class="amount">20.300</span></div>
-              <div class="legend-item"><span class="dot" style="background:var(--cash)"></span><span>Liquidez</span><span class="amount">23.180</span></div>
-              <div class="legend-item"><span class="dot" style="background:var(--metal)"></span><span>Metales</span><span class="amount">8.500</span></div>
-              <div class="legend-item"><span class="dot" style="background:var(--real)"></span><span>Vivienda</span><span class="amount">15.400</span></div>
-              <div class="legend-item"><span class="dot" style="background:var(--other)"></span><span>Otros</span><span class="amount">11.160</span></div>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <section class="asset-grid">
-        <article class="asset-card">
-          <div class="asset-head">
+      <section class="panel assets">
+        <div class="assets-head">
+          <div class="panel-title" style="margin:0">Resumen de activos</div>
+          <div class="see-all">Ver todos</div>
+        </div>
+        <div class="asset-grid">
+          <article class="asset-card">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M3 9L12 4L21 9M5 10H19M6 10V19M10 10V19M14 10V19M18 10V19M4 19H20" stroke="currentColor"/></svg>
             <h3>Liquidez</h3>
-            <span class="pill">18 %</span>
-          </div>
-          <div class="rows">
-            <div class="row"><span>Banco Santander</span><strong>4.250 EUR</strong></div>
-            <div class="row"><span>BBVA</span><strong>2.180 EUR</strong></div>
-            <div class="row"><span>Revolut</span><strong>1.430 EUR</strong></div>
-            <div class="row"><span>Efectivo</span><strong>320 EUR</strong></div>
-          </div>
-        </article>
-
-        <article class="asset-card">
-          <div class="asset-head">
-            <h3>Bolsa</h3>
-            <span class="pill">+2,4 % mes</span>
-          </div>
-          <div class="rows">
-            <div class="row"><span>ETF</span><strong>38.000 EUR</strong></div>
-            <div class="row"><span>Acciones</span><strong>12.000 EUR</strong></div>
-          </div>
-        </article>
-
-        <article class="asset-card">
-          <div class="asset-head">
+            <div class="asset-value">7.120 €</div>
+            <div class="asset-change">+320 € este mes</div>
+            <div class="asset-lines">
+              <div class="asset-line"><span>Santander</span><span>4.250 €</span></div>
+              <div class="asset-line"><span>BBVA</span><span>2.180 €</span></div>
+              <div class="asset-line"><span>Efectivo</span><span>690 €</span></div>
+            </div>
+          </article>
+          <article class="asset-card">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 19H21M6 17V9M11 17V5M16 17V12M21 17V7M4 13L9 9L13 12L20 5" stroke="currentColor"/></svg>
+            <h3>Inversiones</h3>
+            <div class="asset-value">50.000 €</div>
+            <div class="asset-change">+1.250 € este mes</div>
+            <div class="asset-lines">
+              <div class="asset-line"><span>ETF</span><span>38.000 €</span></div>
+              <div class="asset-line"><span>Acciones</span><span>12.000 €</span></div>
+            </div>
+          </article>
+          <article class="asset-card">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M11 4V20M15 4V20M8 7H14.5C17 7 18 8.2 18 10C18 11.4 17.2 12.4 15.5 12.7C17.7 12.9 19 14 19 16C19 18.2 17.4 19 14.5 19H8M8 7V19" stroke="currentColor"/></svg>
             <h3>Criptomonedas</h3>
-            <span class="pill">Riesgo alto</span>
-          </div>
-          <div class="rows">
-            <div class="row"><span>Bitcoin</span><strong>18.000 EUR</strong></div>
-            <div class="row"><span>Ethereum</span><strong>2.300 EUR</strong></div>
-          </div>
-        </article>
-
-        <article class="asset-card">
-          <div class="asset-head">
-            <h3>Acciones sugeridas</h3>
-            <span class="pill">3 hoy</span>
-          </div>
-          <div class="recommendations">
-            <div class="rec">Mantener aportacion periodica actual.</div>
-            <div class="rec warn">Reducir exceso de liquidez durante los proximos 30 dias.</div>
-            <div class="rec">Revisar objetivo "barco" antes de nuevos gastos grandes.</div>
-          </div>
-        </article>
-      </section>
-
-      <section class="panel" style="margin-top:18px">
-        <div class="section-title">
-          <h2>Desglose de salud financiera</h2>
-          <span class="muted">Reglas transparentes</span>
-        </div>
-        <div class="score-list">
-          <div class="score-row"><div class="score-top"><span>Liquidez</span><span>95/100</span></div><div class="bar"><span style="width:95%"></span></div></div>
-          <div class="score-row"><div class="score-top"><span>Diversificacion</span><span>80/100</span></div><div class="bar"><span style="width:80%"></span></div></div>
-          <div class="score-row"><div class="score-top"><span>Rentabilidad</span><span>91/100</span></div><div class="bar"><span style="width:91%"></span></div></div>
-          <div class="score-row"><div class="score-top"><span>Riesgo</span><span>75/100</span></div><div class="bar"><span style="width:75%;background:var(--amber)"></span></div></div>
-          <div class="score-row"><div class="score-top"><span>Endeudamiento</span><span>100/100</span></div><div class="bar"><span style="width:100%"></span></div></div>
-          <div class="score-row"><div class="score-top"><span>Ahorro mensual</span><span>89/100</span></div><div class="bar"><span style="width:89%"></span></div></div>
+            <div class="asset-value">22.300 €</div>
+            <div class="asset-change negative">-230 € este mes</div>
+            <div class="asset-lines">
+              <div class="asset-line"><span>Bitcoin</span><span>18.000 €</span></div>
+              <div class="asset-line"><span>Ethereum</span><span>2.300 €</span></div>
+            </div>
+          </article>
+          <article class="asset-card">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3L20 7L12 11L4 7L12 3Z" stroke="currentColor"/><path d="M4 12L12 16L20 12M4 17L12 21L20 17" stroke="currentColor"/></svg>
+            <h3>Oro y Metales</h3>
+            <div class="asset-value">10.200 €</div>
+            <div class="asset-change">+150 € este mes</div>
+            <div class="asset-lines">
+              <div class="asset-line"><span>Oro</span><span>10.200 €</span></div>
+            </div>
+          </article>
         </div>
       </section>
     </main>
+
+    <nav class="bottom-nav" aria-label="Navegacion principal">
+      <button class="bottom-item active">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 11L12 4L20 11V20H15V14H9V20H4V11Z" stroke="currentColor"/></svg>
+        <span>Inicio</span>
+      </button>
+      <button class="bottom-item">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 7H19M15 3L19 7L15 11M17 17H5M9 13L5 17L9 21" stroke="currentColor"/></svg>
+        <span>Movimientos</span>
+      </button>
+      <button class="fab" aria-label="Anadir">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="white"/></svg>
+      </button>
+      <button class="bottom-item">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 20V11M10 20V5M15 20V8M20 20V3" stroke="currentColor"/></svg>
+        <span>Inversiones</span>
+      </button>
+      <button class="bottom-item">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="8" width="14" height="10" rx="4" stroke="currentColor"/><path d="M9 8V5M15 8V5M9 13H9.01M15 13H15.01" stroke="currentColor"/></svg>
+        <span>Coach IA</span>
+      </button>
+    </nav>
+    <div class="home-indicator"></div>
   </div>
 </body>
 </html>
